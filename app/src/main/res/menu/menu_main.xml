@@ -1,0 +1,58 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+      <group android:id="@+id/group1">
+        <item
+            android:id="@+id/miCompose"
+            android:icon="@android:drawable/ic_media_previous"
+            app:showAsAction="ifRoom"
+            android:title="Compose">
+
+            <item
+                android:id="@+id/action_news"
+                app:showAsAction="never"
+                android:title="News">
+            </item>
+            <item
+                android:id="@+id/action_sports"
+                app:showAsAction="never"
+                android:title="Sports">
+            </item>
+            <item
+                android:id="@+id/action_stock"
+                app:showAsAction="never"
+                android:title="Stocks">
+            </item>
+        </item>
+        <item
+            android:id="@+id/action_teamblind"
+            app:showAsAction="never"
+            android:title="Teamblind">
+        </item>
+    <item
+        android:id="@+id/action_health"
+        app:showAsAction="never"
+        android:title="Health">
+    </item>
+    <item
+        android:id="@+id/action_history"
+        app:showAsAction="never"
+        android:title="History">
+    </item>
+      </group>
+    <group android:id="@+id/group2">
+        <item
+            android:id="@+id/action_about"
+            app:showAsAction="never"
+            android:title="About" />
+    </group>
+    <item
+        android:id="@+id/action_refresh"
+        android:icon="@drawable/refresh"
+        app:showAsAction="ifRoom"
+        android:title=""/>
+    <item
+        android:id="@+id/action_share"
+        android:icon="@drawable/share"
+        app:showAsAction="ifRoom"
+        android:title=""/>
+</menu>
