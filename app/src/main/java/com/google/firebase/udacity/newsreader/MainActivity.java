@@ -32,9 +32,11 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     final Boolean UseLocal = false;
     WebView webView;
     WebView webView2;
-    //SwipeRefreshLayout swipe;
+    RelativeLayout relativeLayout;
     private static final String TAG = "MainActivity";
 
     @Override
@@ -60,13 +62,40 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        relativeLayout = findViewById(R.id.mainlayout);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        WebAction();
+        WebAction(savedInstanceState);
     }
 
-    public void WebAction() {
+    @Override
+    protected void onSaveInstanceState(Bundle outState )
+    {
+        WebView curwebView;
+        if (webView2.getVisibility() == View.VISIBLE)
+            curwebView = webView2;
+        else
+            curwebView = webView;
+
+        super.onSaveInstanceState(outState);
+        curwebView.saveState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        WebView curwebView;
+        if (webView2.getVisibility() == View.VISIBLE)
+            curwebView = webView2;
+        else
+            curwebView = webView;
+
+        super.onRestoreInstanceState(savedInstanceState);
+        curwebView.restoreState(savedInstanceState);
+    }
+
+    public void WebAction(Bundle savedInstanceState) {
         webView2 = (WebView) findViewById(R.id.webView2);
         webView2.setWebContentsDebuggingEnabled(true);
         WebSettings ws2 = webView2.getSettings();
@@ -105,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
+                Boolean apply = false;
                 if (url == "about:blank") {
                     webView2.clearCache(true);
                     webView2.clearHistory();
@@ -112,11 +142,19 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if(url.contains("wenxuecity"))
                 {
+                    apply = true;
                     view.evaluateJavascript("(function() {var parent = document.getElementsByTagName('head').item(0); var style = document.createElement('style'); style.type = 'text/css'; style.innerHTML = ('.sidebar {visibility:hidden !important}  .maincontainer {font-size:40px}');  parent.appendChild(style);})()", null);
                 }
                 else if(url.contains("backchina"))
                 {
+                    apply = true;
                     view.evaluateJavascript("(function() {var t = document.querySelectorAll(\"div[data-google-query-id]\"); if(t !== undefined) t.forEach(e => e.style.visibility=\"hidden\");})()", null);
+                }
+
+                if(apply)
+                {
+                    Snackbar snackbar1 = Snackbar.make(relativeLayout, "Applied local style successfully", Snackbar.LENGTH_SHORT);
+                    snackbar1.show();
                 }
             }
 
@@ -146,10 +184,11 @@ public class MainActivity extends AppCompatActivity {
         //webView.getSettings().setAppCacheEnabled(true);
         webView.setVisibility(View.VISIBLE);
 
-        if(UseLocal)
+        if (UseLocal)
             webView.loadUrl("http://10.0.2.2:3500/?app=1"); //http://10.0.2.2:3500/?app=1
         else
             webView.loadUrl("https://huacrawler.azurewebsites.net/?app=1");
+
 
         //swipe.setRefreshing(true);
 
@@ -161,15 +200,6 @@ public class MainActivity extends AppCompatActivity {
 
                 String myCookies = CookieManager.getInstance().getCookie(url);
                 Log.d(TAG, "cookie is" + myCookies);
-                /*
-                String myCookies = CookieManager.getInstance().getCookie(url);
-                webView.evaluateJavascript("window.localStorage.getItem('rawdata'", new ValueCallback<String>(){
-                    @Override
-                    public void onReceiveValue(String value) {
-                        Log.d(TAG, value);
-                    }
-                });
-                 */
             }
 
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
@@ -406,9 +436,25 @@ public class MainActivity extends AppCompatActivity {
                 sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
                 sendIntent.setType("text/plain");
                 startActivity(Intent.createChooser(sendIntent, "Share..."));
+                break;
+            case R.id.action_bookmark:
+                WebView curwebView2;
+                if (webView2.getVisibility() == View.VISIBLE)
+                    curwebView2 = webView2;
+                else
+                    curwebView2 = webView;
+
+                Intent intent = new Intent(MainActivity.this, BookmarkActivity.class);
+                String msg1 = curwebView2.getUrl();
+                String title = curwebView2.getTitle();
+                Bundle b = new Bundle();
+                b.putString("url", msg1);
+                b.putString("title", title);
+                intent.putExtras(b);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                break;
             default:
-
-
                 break;
         }
         return true;

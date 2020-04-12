@@ -14,8 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Web2Activity"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".BookmarkActivity"></activity>
+        <activity android:name=".BrowserActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize">
+        </activity>
+        <activity android:name=".MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
